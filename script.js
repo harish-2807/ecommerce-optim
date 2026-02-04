@@ -29,7 +29,7 @@ class ECommercePlatform {
             this.userRole = savedRole;
             this.updateUIForRole(savedRole);
             
-            // Hide login section and show appropriate section
+            // Hide login section and go directly to appropriate section
             document.getElementById('loginSection').classList.remove('active');
             
             if (savedRole === 'vendor') {
@@ -39,6 +39,9 @@ class ECommercePlatform {
             } else {
                 this.switchToUserMode();
             }
+        } else {
+            // Show login section first if not logged in
+            this.showSection('login');
         }
     }
 
@@ -677,11 +680,24 @@ class ECommercePlatform {
 
     // Login Methods
     handleLogin(role) {
+        // For vendor role, check credentials
+        if (role === 'vendor') {
+            const username = document.getElementById('vendorUsername').value;
+            const password = document.getElementById('vendorPassword').value;
+            
+            // Validate credentials
+            if (username !== 'vendor' || password !== 'admin123') {
+                this.showMessage('Invalid credentials! Hint: username: vendor, password: admin123', 'error');
+                return;
+            }
+        }
+        
         this.userRole = role;
         this.currentUser = {
             role: role,
             name: role.charAt(0).toUpperCase() + role.slice(1) + ' User',
-            loginTime: new Date().toISOString()
+            loginTime: new Date().toISOString(),
+            username: role === 'vendor' ? document.getElementById('vendorUsername').value : null
         };
         
         // Save login state
@@ -697,7 +713,13 @@ class ECommercePlatform {
         
         this.showMessage(`Welcome ${roleNames[role]}! Access granted.`, 'success');
         
-        // Navigate based on role
+        // Clear vendor login form
+        if (role === 'vendor') {
+            document.getElementById('vendorUsername').value = '';
+            document.getElementById('vendorPassword').value = '';
+        }
+        
+        // Navigate based on role - go directly to role-specific page
         setTimeout(() => {
             if (role === 'vendor') {
                 this.switchToVendorMode();
@@ -772,8 +794,8 @@ class ECommercePlatform {
         document.getElementById('vendorModeBtn').style.display = 'block';
         
         // Show login section
-        this.showSection('loginSection');
-        this.showMessage('Logged out successfully.', 'info');
+        this.showSection('login');
+        this.showMessage('Logged out successfully. Please login again.', 'info');
     }
 
     // Navigation Methods
@@ -964,9 +986,9 @@ class ECommercePlatform {
         // Update UI
         this.updateUIForRole('user');
         
-        // Show products section
+        // Go directly to products page for shopping
         this.showSection('products');
-        this.showMessage('Switched to Customer mode', 'success');
+        this.showMessage('Switched to Customer mode - Happy shopping!', 'success');
     }
 
     switchToVendorMode() {

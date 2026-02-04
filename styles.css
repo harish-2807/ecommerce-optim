@@ -173,6 +173,37 @@ body {
     display: block;
 }
 
+.vendor-login-form {
+    margin-bottom: 1.5rem;
+}
+
+.vendor-login-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.vendor-hint {
+    font-size: 0.8rem;
+    color: #667eea;
+    margin-top: 0.5rem;
+    font-style: italic;
+    text-align: center;
+}
+
 /* Login Section */
 .login-container {
     display: flex;
