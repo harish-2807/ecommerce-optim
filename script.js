@@ -779,11 +779,20 @@ class ECommercePlatform {
     // Navigation Methods
     setupEventListeners() {
         // Navigation - use correct IDs from HTML
-        document.getElementById('homeLink')?.addEventListener('click', () => this.showSection('home'));
-        document.getElementById('productsLink')?.addEventListener('click', () => this.showSection('products'));
-        document.getElementById('cartLink')?.addEventListener('click', () => this.showSection('cart'));
-        document.getElementById('ordersLink')?.addEventListener('click', () => this.showSection('orders'));
-        document.getElementById('vendorLink')?.addEventListener('click', () => this.showSection('vendor'));
+        const homeLink = document.getElementById('homeLink');
+        if (homeLink) homeLink.addEventListener('click', () => this.showSection('home'));
+        
+        const productsLink = document.getElementById('productsLink');
+        if (productsLink) productsLink.addEventListener('click', () => this.showSection('products'));
+        
+        const cartLink = document.getElementById('cartLink');
+        if (cartLink) cartLink.addEventListener('click', () => this.showSection('cart'));
+        
+        const ordersLink = document.getElementById('ordersLink');
+        if (ordersLink) ordersLink.addEventListener('click', () => this.showSection('orders'));
+        
+        const vendorLink = document.getElementById('vendorLink');
+        if (vendorLink) vendorLink.addEventListener('click', () => this.showSection('vendor'));
         
         // Also add click listeners to nav links with data-section attributes
         document.querySelectorAll('.nav-link[data-section]').forEach(link => {
@@ -795,9 +804,14 @@ class ECommercePlatform {
         });
         
         // Mode switching
-        document.getElementById('userModeBtn').addEventListener('click', () => this.switchToUserMode());
-        document.getElementById('vendorModeBtn').addEventListener('click', () => this.switchToVendorMode());
-        document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+        const userModeBtn = document.getElementById('userModeBtn');
+        if (userModeBtn) userModeBtn.addEventListener('click', () => this.switchToUserMode());
+        
+        const vendorModeBtn = document.getElementById('vendorModeBtn');
+        if (vendorModeBtn) vendorModeBtn.addEventListener('click', () => this.switchToVendorMode());
+        
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.addEventListener('click', () => this.logout());
         
         // Login role selection
         document.querySelectorAll('.role-btn').forEach(btn => {
@@ -808,21 +822,35 @@ class ECommercePlatform {
         });
         
         // Cart functionality
-        document.getElementById('cartBtn').addEventListener('click', () => this.showSection('cart'));
+        const cartBtn = document.getElementById('cartBtn');
+        if (cartBtn) cartBtn.addEventListener('click', () => this.showSection('cart'));
         
         // Product form
-        document.getElementById('addProductBtn').addEventListener('click', () => this.showProductForm());
-        document.getElementById('productForm').addEventListener('submit', (e) => this.handleProductSubmit(e));
+        const addProductBtn = document.getElementById('addProductBtn');
+        if (addProductBtn) addProductBtn.addEventListener('click', () => this.showProductForm());
+        
+        const productForm = document.getElementById('productForm');
+        if (productForm) productForm.addEventListener('submit', (e) => this.handleProductSubmit(e));
         
         // Import functionality
-        document.getElementById('importProductsBtn').addEventListener('click', () => this.showImportModal());
-        document.getElementById('importJsonBtn').addEventListener('click', () => this.importJsonData());
-        document.getElementById('loadSampleDataBtn').addEventListener('click', () => this.loadSampleData());
+        const importProductsBtn = document.getElementById('importProductsBtn');
+        if (importProductsBtn) importProductsBtn.addEventListener('click', () => this.showImportModal());
+        
+        const importJsonBtn = document.getElementById('importJsonBtn');
+        if (importJsonBtn) importJsonBtn.addEventListener('click', () => this.importJsonData());
+        
+        const loadSampleDataBtn = document.getElementById('loadSampleDataBtn');
+        if (loadSampleDataBtn) loadSampleDataBtn.addEventListener('click', () => this.loadSampleData());
         
         // Checkout
-        document.getElementById('checkoutBtn').addEventListener('click', () => this.showCheckout());
-        document.getElementById('checkoutForm').addEventListener('submit', (e) => this.handleCheckout(e));
-        document.getElementById('cancelCheckoutBtn').addEventListener('click', () => this.closeModal('checkoutModal'));
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        if (checkoutBtn) checkoutBtn.addEventListener('click', () => this.showCheckout());
+        
+        const checkoutForm = document.getElementById('checkoutForm');
+        if (checkoutForm) checkoutForm.addEventListener('submit', (e) => this.handleCheckout(e));
+        
+        const cancelCheckoutBtn = document.getElementById('cancelCheckoutBtn');
+        if (cancelCheckoutBtn) cancelCheckoutBtn.addEventListener('click', () => this.closeModal('checkoutModal'));
         
         // Modals
         document.querySelectorAll('.close').forEach(closeBtn => {
@@ -833,13 +861,49 @@ class ECommercePlatform {
         });
         
         // Search and filter
-        document.getElementById('searchInput').addEventListener('input', (e) => this.handleSearch(e.target.value));
-        document.getElementById('categoryFilter').addEventListener('change', (e) => this.handleCategoryFilter(e.target.value));
-        document.getElementById('sortFilter').addEventListener('change', (e) => this.handleSort(e.target.value));
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+        
+        const categoryFilter = document.getElementById('categoryFilter');
+        if (categoryFilter) categoryFilter.addEventListener('change', (e) => this.handleCategoryFilter(e.target.value));
+        
+        const sortFilter = document.getElementById('sortFilter');
+        if (sortFilter) sortFilter.addEventListener('change', (e) => this.handleSort(e.target.value));
         
         // Hero buttons
-        document.getElementById('startShoppingBtn').addEventListener('click', () => this.showSection('products'));
-        document.getElementById('startSellingBtn').addEventListener('click', () => this.switchToVendorMode());
+        const startShoppingBtn = document.getElementById('startShoppingBtn');
+        if (startShoppingBtn) startShoppingBtn.addEventListener('click', () => this.showSection('products'));
+        
+        const startSellingBtn = document.getElementById('startSellingBtn');
+        if (startSellingBtn) startSellingBtn.addEventListener('click', () => this.switchToVendorMode());
+        
+        // Add to cart buttons (delegated event handling)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-to-cart-btn') || e.target.closest('.add-to-cart-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const btn = e.target.classList.contains('add-to-cart-btn') ? e.target : e.target.closest('.add-to-cart-btn');
+                const productId = parseInt(btn.getAttribute('data-product-id'));
+                this.addToCart(productId);
+            }
+            
+            if (e.target.classList.contains('modal-add-to-cart-btn') || e.target.closest('.modal-add-to-cart-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const btn = e.target.classList.contains('modal-add-to-cart-btn') ? e.target : e.target.closest('.modal-add-to-cart-btn');
+                const productId = parseInt(btn.getAttribute('data-product-id'));
+                this.addToCart(productId);
+                document.getElementById('productModal').classList.remove('show');
+            }
+            
+            if (e.target.closest('.product-card') && !e.target.closest('.add-to-cart-btn')) {
+                const productCard = e.target.closest('.product-card');
+                const productId = parseInt(productCard.getAttribute('data-product-id'));
+                if (productId) {
+                    this.showProductDetails(productId);
+                }
+            }
+        });
     }
 
     showSection(sectionName) {
@@ -941,7 +1005,7 @@ class ECommercePlatform {
         }
 
         grid.innerHTML = productsToRender.map(product => `
-            <div class="product-card" onclick="platform.showProductDetails(${product.id})">
+            <div class="product-card" data-product-id="${product.id}">
                 <img src="${product.image}" alt="${product.title}" class="product-image">
                 <div class="product-info">
                     <h3 class="product-title">${product.title}</h3>
@@ -949,7 +1013,7 @@ class ECommercePlatform {
                     <div class="product-price">₹${product.price.toFixed(2)}</div>
                     <span class="product-category">${product.category}</span>
                     <div class="product-actions">
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); platform.addToCart(${product.id})">
+                        <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
@@ -1003,7 +1067,7 @@ class ECommercePlatform {
                 <p><strong>Stock:</strong> ${product.stock} units</p>
                 <p><strong>Vendor:</strong> ${product.vendor}</p>
                 <p>${product.description}</p>
-                <button class="btn btn-primary" onclick="platform.addToCart(${product.id}); document.getElementById('productModal').classList.remove('show');">
+                <button class="btn btn-primary modal-add-to-cart-btn" data-product-id="${product.id}">
                     <i class="fas fa-cart-plus"></i> Add to Cart
                 </button>
             </div>
@@ -1517,5 +1581,7 @@ class ECommercePlatform {
     }
 }
 
-// Initialize the platform
-const platform = new ECommercePlatform();
+// Initialize the platform when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.platform = new ECommercePlatform();
+});
