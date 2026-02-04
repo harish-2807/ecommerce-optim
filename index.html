@@ -30,6 +30,7 @@
                 <div class="user-actions">
                     <button id="userModeBtn" class="btn btn-outline">Switch to User</button>
                     <button id="vendorModeBtn" class="btn btn-primary">Switch to Vendor</button>
+                    <button id="logoutBtn" class="btn btn-danger" style="display: none;">Logout</button>
                 </div>
             </div>
         </div>
@@ -38,8 +39,87 @@
     <!-- Main Content -->
     <main class="main">
         <div class="container">
+            <!-- Login Section -->
+            <section id="loginSection" class="section active">
+                <div class="login-container">
+                    <div class="login-card">
+                        <div class="login-header">
+                            <h2 class="login-title">
+                                <span class="login-greeting">Welcome to</span>
+                                <span class="login-brand">ShopHub</span>
+                                <span class="login-subtitle">Choose Your Role</span>
+                            </h2>
+                            <p class="login-description">
+                                Select your role to access the platform. No password required - just choose and go!
+                            </p>
+                        </div>
+                        
+                        <div class="role-selection">
+                            <div class="role-card" data-role="user">
+                                <div class="role-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <h3>Customer</h3>
+                                <p>Browse products, shop, and track orders</p>
+                                <ul class="role-features">
+                                    <li><i class="fas fa-check"></i> Browse 25+ products</li>
+                                    <li><i class="fas fa-check"></i> Add to cart & checkout</li>
+                                    <li><i class="fas fa-check"></i> Order tracking</li>
+                                    <li><i class="fas fa-check"></i> Fast delivery</li>
+                                </ul>
+                                <button class="btn btn-primary role-btn" data-role="user">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Enter as Customer
+                                </button>
+                            </div>
+                            
+                            <div class="role-card" data-role="vendor">
+                                <div class="role-icon">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <h3>Vendor</h3>
+                                <p>Manage products and track sales</p>
+                                <ul class="role-features">
+                                    <li><i class="fas fa-check"></i> Product management</li>
+                                    <li><i class="fas fa-check"></i> Bulk import products</li>
+                                    <li><i class="fas fa-check"></i> Sales analytics</li>
+                                    <li><i class="fas fa-check"></i> Order management</li>
+                                </ul>
+                                <button class="btn btn-success role-btn" data-role="vendor">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Enter as Vendor
+                                </button>
+                            </div>
+                            
+                            <div class="role-card" data-role="admin">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <h3>Administrator</h3>
+                                <p>Full system access and control</p>
+                                <ul class="role-features">
+                                    <li><i class="fas fa-check"></i> All user access</li>
+                                    <li><i class="fas fa-check"></i> System settings</li>
+                                    <li><i class="fas fa-check"></i> Analytics dashboard</li>
+                                    <li><i class="fas fa-check"></i> Full control</li>
+                                </ul>
+                                <button class="btn btn-warning role-btn" data-role="admin">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Enter as Admin
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="login-footer">
+                            <p><i class="fas fa-info-circle"></i> No registration or password required</p>
+                            <p><i class="fas fa-lock-open"></i> Quick access for demonstration purposes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Home Section -->
-            <section id="homeSection" class="section active">
+            <section id="homeSection" class="section">
                 <div class="hero">
                     <div class="hero-content">
                         <div class="hero-text">

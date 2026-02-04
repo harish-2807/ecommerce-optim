@@ -1,7 +1,8 @@
 // E-Commerce Platform JavaScript
 class ECommercePlatform {
     constructor() {
-        this.currentUser = 'user'; // 'user' or 'vendor'
+        this.currentUser = null;
+        this.userRole = null;
         this.products = [];
         this.cart = [];
         this.orders = [];
@@ -11,11 +12,34 @@ class ECommercePlatform {
 
     init() {
         this.loadData();
+        this.checkLoginState();
         this.setupEventListeners();
         this.renderProducts();
         this.updateCartCount();
         this.updateVendorStats();
         this.initHeroAnimations();
+    }
+
+    checkLoginState() {
+        const savedUser = localStorage.getItem('currentUser');
+        const savedRole = localStorage.getItem('userRole');
+        
+        if (savedUser && savedRole) {
+            this.currentUser = JSON.parse(savedUser);
+            this.userRole = savedRole;
+            this.updateUIForRole(savedRole);
+            
+            // Hide login section and show appropriate section
+            document.getElementById('loginSection').classList.remove('active');
+            
+            if (savedRole === 'vendor') {
+                this.switchToVendorMode();
+            } else if (savedRole === 'admin') {
+                this.switchToAdminMode();
+            } else {
+                this.switchToUserMode();
+            }
+        }
     }
 
     initHeroAnimations() {
@@ -651,72 +675,201 @@ class ECommercePlatform {
         this.showMessage(`Successfully imported ${importedCount} products!`, 'success');
     }
 
+    // Login Methods
+    handleLogin(role) {
+        this.userRole = role;
+        this.currentUser = {
+            role: role,
+            name: role.charAt(0).toUpperCase() + role.slice(1) + ' User',
+            loginTime: new Date().toISOString()
+        };
+        
+        // Save login state
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        localStorage.setItem('userRole', role);
+        
+        // Show welcome message
+        const roleNames = {
+            'user': 'Customer',
+            'vendor': 'Vendor',
+            'admin': 'Administrator'
+        };
+        
+        this.showMessage(`Welcome ${roleNames[role]}! Access granted.`, 'success');
+        
+        // Navigate based on role
+        setTimeout(() => {
+            if (role === 'vendor') {
+                this.switchToVendorMode();
+            } else if (role === 'admin') {
+                this.switchToAdminMode();
+            } else {
+                this.switchToUserMode();
+            }
+        }, 1000);
+    }
+
+    switchToAdminMode() {
+        this.userRole = 'admin';
+        document.getElementById('userModeBtn').style.display = 'none';
+        document.getElementById('vendorModeBtn').style.display = 'none';
+        
+        // Show admin-specific elements
+        this.showSection('vendorSection');
+        this.updateUIForRole('admin');
+        
+        // Show admin message
+        this.showMessage('Administrator mode activated. Full system access granted.', 'info');
+    }
+
+    updateUIForRole(role) {
+        const header = document.querySelector('header');
+        const roleBadge = document.createElement('div');
+        roleBadge.className = 'role-badge';
+        roleBadge.innerHTML = `<i class="fas fa-user-circle"></i> ${role.charAt(0).toUpperCase() + role.slice(1)}`;
+        
+        // Remove existing badge
+        const existingBadge = header.querySelector('.role-badge');
+        if (existingBadge) {
+            existingBadge.remove();
+        }
+        
+        // Add new badge
+        header.querySelector('.user-actions').appendChild(roleBadge);
+        
+        // Show logout button and hide mode switchers
+        document.getElementById('logoutBtn').style.display = 'block';
+        document.getElementById('userModeBtn').style.display = 'none';
+        document.getElementById('vendorModeBtn').style.display = 'none';
+        
+        // Update navigation visibility based on role
+        if (role === 'admin') {
+            document.getElementById('vendorLink').style.display = 'block';
+            document.getElementById('ordersLink').style.display = 'block';
+        } else if (role === 'vendor') {
+            document.getElementById('vendorLink').style.display = 'block';
+            document.getElementById('ordersLink').style.display = 'none';
+        } else {
+            document.getElementById('vendorLink').style.display = 'none';
+            document.getElementById('ordersLink').style.display = 'block';
+        }
+    }
+
+    logout() {
+        this.currentUser = null;
+        this.userRole = null;
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('userRole');
+        
+        // Remove role badge
+        const roleBadge = document.querySelector('.role-badge');
+        if (roleBadge) {
+            roleBadge.remove();
+        }
+        
+        // Reset UI
+        document.getElementById('userModeBtn').style.display = 'block';
+        document.getElementById('vendorModeBtn').style.display = 'block';
+        
+        // Show login section
+        this.showSection('loginSection');
+        this.showMessage('Logged out successfully.', 'info');
+    }
+
     // Navigation Methods
     setupEventListeners() {
-        // Navigation
-        document.getElementById('homeLink').addEventListener('click', () => this.showSection('home'));
-        document.getElementById('productsLink').addEventListener('click', () => this.showSection('products'));
-        document.getElementById('cartLink').addEventListener('click', () => this.showSection('cart'));
-        document.getElementById('ordersLink').addEventListener('click', () => this.showSection('orders'));
-        document.getElementById('vendorLink').addEventListener('click', () => this.showSection('vendor'));
-
-        // Mode switching
-        document.getElementById('userModeBtn').addEventListener('click', () => this.switchToUser());
-        document.getElementById('vendorModeBtn').addEventListener('click', () => this.switchToVendor());
-
-        // Hero buttons
-        document.getElementById('startShoppingBtn').addEventListener('click', () => this.showSection('products'));
-        document.getElementById('startSellingBtn').addEventListener('click', () => {
-            this.switchToVendor();
-            this.showSection('vendor');
+        // Navigation - use correct IDs from HTML
+        document.getElementById('homeLink')?.addEventListener('click', () => this.showSection('home'));
+        document.getElementById('productsLink')?.addEventListener('click', () => this.showSection('products'));
+        document.getElementById('cartLink')?.addEventListener('click', () => this.showSection('cart'));
+        document.getElementById('ordersLink')?.addEventListener('click', () => this.showSection('orders'));
+        document.getElementById('vendorLink')?.addEventListener('click', () => this.showSection('vendor'));
+        
+        // Also add click listeners to nav links with data-section attributes
+        document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.getAttribute('data-section');
+                this.showSection(section);
+            });
         });
-
-        // Search and filters
-        document.getElementById('searchInput').addEventListener('input', () => this.filterProducts());
-        document.getElementById('categoryFilter').addEventListener('change', () => this.filterProducts());
-        document.getElementById('sortFilter').addEventListener('change', () => this.filterProducts());
-
-        // Cart
-        document.getElementById('checkoutBtn').addEventListener('click', () => this.showCheckout());
-
-        // Vendor
+        
+        // Mode switching
+        document.getElementById('userModeBtn').addEventListener('click', () => this.switchToUserMode());
+        document.getElementById('vendorModeBtn').addEventListener('click', () => this.switchToVendorMode());
+        document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+        
+        // Login role selection
+        document.querySelectorAll('.role-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const role = e.currentTarget.getAttribute('data-role');
+                this.handleLogin(role);
+            });
+        });
+        
+        // Cart functionality
+        document.getElementById('cartBtn').addEventListener('click', () => this.showSection('cart'));
+        
+        // Product form
         document.getElementById('addProductBtn').addEventListener('click', () => this.showProductForm());
+        document.getElementById('productForm').addEventListener('submit', (e) => this.handleProductSubmit(e));
+        
+        // Import functionality
         document.getElementById('importProductsBtn').addEventListener('click', () => this.showImportModal());
         document.getElementById('importJsonBtn').addEventListener('click', () => this.importJsonData());
         document.getElementById('loadSampleDataBtn').addEventListener('click', () => this.loadSampleData());
-
+        
+        // Checkout
+        document.getElementById('checkoutBtn').addEventListener('click', () => this.showCheckout());
+        document.getElementById('checkoutForm').addEventListener('submit', (e) => this.handleCheckout(e));
+        document.getElementById('cancelCheckoutBtn').addEventListener('click', () => this.closeModal('checkoutModal'));
+        
         // Modals
         document.querySelectorAll('.close').forEach(closeBtn => {
             closeBtn.addEventListener('click', (e) => {
-                e.target.closest('.modal').classList.remove('show');
+                const modal = e.target.closest('.modal');
+                this.closeModal(modal.id);
             });
         });
-
-        // Forms
-        document.getElementById('productForm').addEventListener('submit', (e) => this.handleProductSubmit(e));
-        document.getElementById('checkoutForm').addEventListener('submit', (e) => this.handleCheckout(e));
-        document.getElementById('cancelProductBtn').addEventListener('click', () => this.closeProductForm());
-        document.getElementById('cancelCheckoutBtn').addEventListener('click', () => this.closeCheckout());
-
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.classList.remove('show');
-            }
-        });
+        
+        // Search and filter
+        document.getElementById('searchInput').addEventListener('input', (e) => this.handleSearch(e.target.value));
+        document.getElementById('categoryFilter').addEventListener('change', (e) => this.handleCategoryFilter(e.target.value));
+        document.getElementById('sortFilter').addEventListener('change', (e) => this.handleSort(e.target.value));
+        
+        // Hero buttons
+        document.getElementById('startShoppingBtn').addEventListener('click', () => this.showSection('products'));
+        document.getElementById('startSellingBtn').addEventListener('click', () => this.switchToVendorMode());
     }
 
     showSection(sectionName) {
+        // Hide all sections
         document.querySelectorAll('.section').forEach(section => {
             section.classList.remove('active');
         });
-        document.getElementById(sectionName + 'Section').classList.add('active');
+        
+        // Show the selected section
+        const targetSection = document.getElementById(sectionName + 'Section');
+        if (targetSection) {
+            targetSection.classList.add('active');
+        } else {
+            console.error(`Section ${sectionName}Section not found`);
+            return;
+        }
 
+        // Update nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
         });
-        document.getElementById(sectionName + 'Link').classList.add('active');
+        
+        // Find and activate the corresponding nav link
+        const navLink = document.getElementById(sectionName + 'Link') || 
+                       document.querySelector(`[data-section="${sectionName}"]`);
+        if (navLink) {
+            navLink.classList.add('active');
+        }
 
+        // Handle section-specific logic
         if (sectionName === 'cart') {
             this.renderCart();
         } else if (sectionName === 'orders') {
@@ -725,20 +878,50 @@ class ECommercePlatform {
             this.renderVendorProducts();
             this.renderVendorOrders();
             this.updateVendorStats();
+        } else if (sectionName === 'products') {
+            this.renderProducts();
+        } else if (sectionName === 'home') {
+            this.initHeroAnimations();
         }
     }
 
-    switchToUser() {
-        this.currentUser = 'user';
-        document.getElementById('userModeBtn').style.display = 'none';
-        document.getElementById('vendorModeBtn').style.display = 'inline-block';
-        this.showMessage('Switched to User mode', 'success');
+    switchToUserMode() {
+        this.userRole = 'user';
+        this.currentUser = {
+            role: 'user',
+            name: 'Customer User',
+            loginTime: new Date().toISOString()
+        };
+        
+        // Save login state
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        localStorage.setItem('userRole', 'user');
+        
+        // Update UI
+        this.updateUIForRole('user');
+        
+        // Show products section
+        this.showSection('products');
+        this.showMessage('Switched to Customer mode', 'success');
     }
 
-    switchToVendor() {
-        this.currentUser = 'vendor';
-        document.getElementById('vendorModeBtn').style.display = 'none';
-        document.getElementById('userModeBtn').style.display = 'inline-block';
+    switchToVendorMode() {
+        this.userRole = 'vendor';
+        this.currentUser = {
+            role: 'vendor',
+            name: 'Vendor User',
+            loginTime: new Date().toISOString()
+        };
+        
+        // Save login state
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        localStorage.setItem('userRole', 'vendor');
+        
+        // Update UI
+        this.updateUIForRole('vendor');
+        
+        // Show vendor section
+        this.showSection('vendor');
         this.showMessage('Switched to Vendor mode', 'success');
     }
 
@@ -831,8 +1014,14 @@ class ECommercePlatform {
 
     // Cart Methods
     addToCart(productId) {
+        console.log('Adding to cart:', productId);
         const product = this.products.find(p => p.id === productId);
-        if (!product) return;
+        if (!product) {
+            console.error('Product not found:', productId);
+            return;
+        }
+
+        console.log('Product found:', product);
 
         if (product.stock === 0) {
             this.showMessage('Product is out of stock', 'error');
@@ -854,6 +1043,7 @@ class ECommercePlatform {
             });
         }
 
+        console.log('Cart updated:', this.cart);
         this.saveData();
         this.updateCartCount();
         this.showMessage('Product added to cart', 'success');
@@ -888,7 +1078,14 @@ class ECommercePlatform {
 
     updateCartCount() {
         const count = this.cart.reduce((total, item) => total + item.quantity, 0);
-        document.getElementById('cartCount').textContent = count;
+        console.log('Updating cart count to:', count);
+        const cartCountElement = document.getElementById('cartCount');
+        if (cartCountElement) {
+            cartCountElement.textContent = count;
+            console.log('Cart count updated successfully');
+        } else {
+            console.error('Cart count element not found');
+        }
     }
 
     renderCart() {
