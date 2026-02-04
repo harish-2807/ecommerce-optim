@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1><i class="fas fa-shopping-cart"></i> ShopHub</h1>
+                </div>
+                <nav class="nav">
+                    <ul>
+                        <li><a href="#" id="homeLink" class="nav-link active">Home</a></li>
+                        <li><a href="#" id="productsLink" class="nav-link">Products</a></li>
+                        <li><a href="#" id="cartLink" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i> 
+                            Cart <span id="cartCount" class="cart-count">0</span>
+                        </a></li>
+                        <li><a href="#" id="ordersLink" class="nav-link">Orders</a></li>
+                        <li><a href="#" id="vendorLink" class="nav-link">Vendor</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button id="userModeBtn" class="btn btn-outline">Switch to User</button>
+                    <button id="vendorModeBtn" class="btn btn-primary">Switch to Vendor</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Home Section -->
+            <section id="homeSection" class="section active">
+                <div class="hero">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <h2 class="hero-title">
+                                <span class="hero-greeting">Welcome to</span>
+                                <span class="hero-brand">ShopHub</span>
+                                <span class="hero-tagline">Your Ultimate Shopping Destination</span>
+                            </h2>
+                            <p class="hero-description">
+                                Discover amazing products from trusted vendors. Experience seamless shopping with secure payments and fast delivery.
+                            </p>
+                            <div class="hero-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    <span>Fast Delivery</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Secure Payment</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-undo"></i>
+                                    <span>Easy Returns</span>
+                                </div>
+                            </div>
+                            <div class="hero-buttons">
+                                <button id="startShoppingBtn" class="btn btn-primary btn-hero">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    Start Shopping
+                                </button>
+                                <button id="startSellingBtn" class="btn btn-outline btn-hero">
+                                    <i class="fas fa-store"></i>
+                                    Start Selling
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <div class="floating-cards">
+                                <div class="floating-card card-1">
+                                    <i class="fas fa-laptop"></i>
+                                    <span>Electronics</span>
+                                </div>
+                                <div class="floating-card card-2">
+                                    <i class="fas fa-tshirt"></i>
+                                    <span>Fashion</span>
+                                </div>
+                                <div class="floating-card card-3">
+                                    <i class="fas fa-book"></i>
+                                    <span>Books</span>
+                                </div>
+                                <div class="floating-card card-4">
+                                    <i class="fas fa-gem"></i>
+                                    <span>Jewelry</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="1000">0</div>
+                            <div class="stat-label">Products</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="500">0</div>
+                            <div class="stat-label">Happy Customers</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" data-target="50">0</div>
+                            <div class="stat-label">Vendors</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="productsSection" class="section">
+                <div class="section-header">
+                    <h2>Products</h2>
+                    <div class="search-filter-container">
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Search products...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="books">Books</option>
+                            <option value="home">Home & Garden</option>
+                            <option value="sports">Sports</option>
+                        </select>
+                        <select id="sortFilter" class="filter-select">
+                            <option value="name">Sort by Name</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="productsGrid" class="products-grid">
+                    <!-- Products will be dynamically loaded here -->
+                </div>
+            </section>
+
+            <!-- Cart Section -->
+            <section id="cartSection" class="section">
+                <h2>Shopping Cart</h2>
+                <div id="cartItems" class="cart-items">
+                    <!-- Cart items will be dynamically loaded here -->
+                </div>
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <h3>Total: ₹<span id="cartTotal">0.00</span></h3>
+                    </div>
+                    <button id="checkoutBtn" class="btn btn-primary">Proceed to Checkout</button>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="ordersSection" class="section">
+                <h2>Order History</h2>
+                <div id="ordersList" class="orders-list">
+                    <!-- Orders will be dynamically loaded here -->
+                </div>
+            </section>
+
+            <!-- Vendor Section -->
+            <section id="vendorSection" class="section">
+                <div class="vendor-header">
+                    <h2>Vendor Dashboard</h2>
+                    <div class="vendor-actions">
+                        <button id="importProductsBtn" class="btn btn-success">
+                            <i class="fas fa-upload"></i> Import Products
+                        </button>
+                        <button id="addProductBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add New Product
+                        </button>
+                    </div>
+                </div>
+                <div class="vendor-stats">
+                    <div class="stat-card">
+                        <h3>Total Products</h3>
+                        <p id="totalProducts">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Sales</h3>
+                        <p id="totalSales">$0.00</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <p id="totalOrders">0</p>
+                    </div>
+                </div>
+                <div class="vendor-products">
+                    <h3>Your Products</h3>
+                    <div id="vendorProductsGrid" class="products-grid">
+                        <!-- Vendor products will be dynamically loaded here -->
+                    </div>
+                </div>
+                <div class="vendor-orders">
+                    <h3>Recent Orders</h3>
+                    <div id="vendorOrdersList" class="orders-list">
+                        <!-- Vendor orders will be dynamically loaded here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Product Details</h2>
+            <div id="modalBody">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productFormModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="formModalTitle">Add New Product</h2>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="productTitle">Product Title</label>
+                    <input type="text" id="productTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Price (₹)</label>
+                    <input type="number" id="productPrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="books">Books</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productImage">Image URL</label>
+                    <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="productStock">Stock Quantity</label>
+                    <input type="number" id="productStock" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelProductBtn" class="btn btn-outline">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Checkout</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="customerName">Full Name</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerEmail">Email</label>
+                    <input type="email" id="customerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="customerAddress">Shipping Address</label>
+                    <textarea id="customerAddress" required></textarea>
+                </div>
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div id="checkoutItems"></div>
+                    <div class="order-total">
+                        <strong>Total: ₹<span id="checkoutTotal">0.00</span></strong>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelCheckoutBtn" class="btn btn-outline">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Place Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import Products Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Import Products</h2>
+            <div class="import-options">
+                <div class="import-section">
+                    <h3>Option 1: Paste JSON Data</h3>
+                    <p>Paste your product JSON data in the textarea below:</p>
+                    <textarea id="jsonImportData" rows="10" placeholder='[{"title": "Product Name", "price": 99.99, "description": "Product description", "category": "electronics", "image": "https://example.com/image.jpg"}]'></textarea>
+                    <button id="importJsonBtn" class="btn btn-primary">Import JSON Data</button>
+                </div>
+                <div class="import-section">
+                    <h3>Option 2: Load Sample Data</h3>
+                    <p>Import the sample product dataset (20 products):</p>
+                    <button id="loadSampleDataBtn" class="btn btn-success">Load Sample Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
