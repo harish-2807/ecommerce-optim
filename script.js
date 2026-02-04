@@ -678,6 +678,120 @@ class ECommercePlatform {
         this.showMessage(`Successfully imported ${importedCount} products!`, 'success');
     }
 
+    // New Login Methods
+    handleRoleSelection(role) {
+        const usernameGroup = document.getElementById('usernameGroup');
+        const passwordGroup = document.getElementById('passwordGroup');
+        const roleFeatures = document.getElementById('roleFeatures');
+        const loginHint = document.getElementById('loginHint');
+        const hintText = document.getElementById('hintText');
+        const loginBtn = document.getElementById('loginButtonText');
+        const submitBtn = document.querySelector('.login-submit-btn');
+        
+        // Reset all fields
+        usernameGroup.style.display = 'none';
+        passwordGroup.style.display = 'none';
+        roleFeatures.style.display = 'none';
+        loginHint.style.display = 'none';
+        
+        if (!role) {
+            submitBtn.disabled = true;
+            loginBtn.textContent = 'Select Role to Continue';
+            return;
+        }
+        
+        // Enable submit button
+        submitBtn.disabled = false;
+        
+        // Role-specific configurations
+        if (role === 'user') {
+            loginBtn.textContent = 'Login as Customer';
+            roleFeatures.style.display = 'block';
+            roleFeatures.innerHTML = `
+                <h4>Customer Features:</h4>
+                <ul>
+                    <li><i class="fas fa-check"></i> Browse 25+ products</li>
+                    <li><i class="fas fa-check"></i> Add to cart & checkout</li>
+                    <li><i class="fas fa-check"></i> Order tracking</li>
+                    <li><i class="fas fa-check"></i> Fast delivery</li>
+                </ul>
+            `;
+        } else if (role === 'vendor') {
+            loginBtn.textContent = 'Login as Vendor';
+            usernameGroup.style.display = 'block';
+            passwordGroup.style.display = 'block';
+            roleFeatures.style.display = 'block';
+            loginHint.style.display = 'block';
+            hintText.textContent = 'Hint: username: vendor, password: admin123';
+            roleFeatures.innerHTML = `
+                <h4>Vendor Features:</h4>
+                <ul>
+                    <li><i class="fas fa-check"></i> Product management</li>
+                    <li><i class="fas fa-check"></i> Bulk import products</li>
+                    <li><i class="fas fa-check"></i> Sales analytics</li>
+                    <li><i class="fas fa-check"></i> Order management</li>
+                </ul>
+            `;
+        }
+    }
+
+    handleLoginSubmit(e) {
+        e.preventDefault();
+        
+        const role = document.getElementById('userRole').value;
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        // Validate vendor credentials
+        if (role === 'vendor') {
+            if (username !== 'vendor' || password !== 'admin123') {
+                this.showMessage('Invalid credentials! Use username: vendor, password: admin123', 'error');
+                return;
+            }
+        }
+        
+        // Process login
+        this.processLogin(role);
+    }
+
+    processLogin(role) {
+        this.userRole = role;
+        this.currentUser = {
+            role: role,
+            name: role.charAt(0).toUpperCase() + role.slice(1) + ' User',
+            loginTime: new Date().toISOString(),
+            username: role === 'vendor' ? document.getElementById('loginUsername').value : null
+        };
+        
+        // Save login state
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        localStorage.setItem('userRole', role);
+        
+        // Show welcome message
+        const roleNames = {
+            'user': 'Customer',
+            'vendor': 'Vendor',
+            'admin': 'Administrator'
+        };
+        
+        this.showMessage(`Welcome ${roleNames[role]}! Access granted.`, 'success');
+        
+        // Clear form
+        document.getElementById('loginForm').reset();
+        this.handleRoleSelection(''); // Reset form state
+        
+        // Navigate based on role
+        setTimeout(() => {
+            if (role === 'vendor') {
+                this.switchToVendorMode();
+            } else if (role === 'admin') {
+                this.switchToAdminMode();
+            } else {
+                this.switchToUserMode();
+            }
+        }, 1000);
+    }
+
     // Login Methods
     handleLogin(role) {
         // For vendor role, check credentials
@@ -835,13 +949,16 @@ class ECommercePlatform {
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) logoutBtn.addEventListener('click', () => this.logout());
         
-        // Login role selection
-        document.querySelectorAll('.role-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const role = e.currentTarget.getAttribute('data-role');
-                this.handleLogin(role);
-            });
-        });
+        // Login form handling
+        const userRoleSelect = document.getElementById('userRole');
+        if (userRoleSelect) {
+            userRoleSelect.addEventListener('change', (e) => this.handleRoleSelection(e.target.value));
+        }
+        
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => this.handleLoginSubmit(e));
+        }
         
         // Cart functionality
         const cartBtn = document.getElementById('cartBtn');
